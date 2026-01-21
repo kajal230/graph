@@ -1,0 +1,45 @@
+class Solution {
+public:
+  bool bfs(int start,vector<vector<int>>& graph, vector<int>&vis, vector<int>&pathvis, vector<int>&check){
+       vis[start]=0;
+      pathvis[start]=0;
+       check[start]=0;
+       queue<int>q;
+       q.push(start);
+       while(!q.empty()){ 
+        int node=q.front();
+        q.pop();
+        for(auto it:graph[node]){
+          if(!vis[it]){
+           if(bfs(it,graph,vis,pathvis,check))
+            check[node]=0;
+            return true;
+          } else if(pathvis[it]==1){
+            check[node]=0;
+            return true;
+          }
+        }
+       }
+       check[start]=1;
+       pathvis[start]=0;
+       return false;
+
+  }
+    vector<int> eventualSafeNodes(vector<vector<int>>& graph) {
+     int n=graph.size();
+     vector<int>vis(n,0),pathvis(n,0),check(n,0);
+     vector<int>safenode;
+      for(int i=0; i<n; i++){
+        if(!vis[i]){
+            bfs(i,graph,vis,pathvis,check);
+        }
+      }
+      for(int i=0; i<n; i++){
+        if(check[i]==1){
+            safenode.push_back(i);
+        }
+      }
+     return safenode;
+    }
+};
+ 
