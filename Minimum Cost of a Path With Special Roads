@@ -1,0 +1,56 @@
+class Solution {
+public:
+    int minimumCost(vector<int>& start, vector<int>& target, vector<vector<int>>& specialRoads) {
+        
+        vector<vector<int>> points;
+        points.push_back(start);
+        points.push_back(target);
+
+        for (auto &r : specialRoads) {
+            points.push_back({r[0], r[1]}); 
+            points.push_back({r[2], r[3]}); 
+        }
+
+        int n = points.size();
+        const long long INF = 1e18;
+        vector<long long> dist(n, INF);
+
+        priority_queue<pair<long long, int>, vector<pair<long long, int>>, greater<pair<long long, int>>> pq;
+
+        dist[0] = 0; 
+        pq.push({0, 0});
+
+        while (!pq.empty()) {
+            auto [cost, u] = pq.top();
+            pq.pop();
+
+            if (cost > dist[u]) continue;
+
+            
+            for (int v = 0; v < n; v++) {
+                long long d = abs(points[v][0] - points[u][0]) + abs(points[v][1] - points[u][1]);
+                if (dist[v] > cost + d) {
+                    dist[v] = cost + d;
+                    pq.push({dist[v], v});
+                }
+            }
+
+            for (auto &r : specialRoads) {
+                if (points[u][0] == r[0] && points[u][1] == r[1]) {
+          
+                    for (int v = 0; v < n; v++) {
+                        if (points[v][0] == r[2] && points[v][1] == r[3]) {
+                            long long d = r[4];
+                            if (dist[v] > cost + d) {
+                                dist[v] = cost + d;
+                                pq.push({dist[v], v});
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return dist[1]; 
+    }
+};
